@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- Page Content -->
+    <div id="page-content">
+        <div class="container">
+            <button onclick="goBack()" type="submit" class="btn btn-primary">Go Back</button><br><br>
+            <header><h1 id="courseTitle" style="  margin-top: 20px;">{{object.title}}</h1></header>
+            <div class="row">
+                <!-- Course Image -->
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                    <figure class="course-image">
+                        <div class="image-wrapper"><img src={{object.photo}} alt="Loading Coursera Icon" /></div>
+                    </figure>
+                </div><!-- end Course Image -->
+                <!--MAIN Content-->
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <div id="page-main">
+                        <section id="course-detail">
+                            <article class="course-detail">
+                                <section id="course-header">
+                                    {% if 'None' not in session_date %}
+                                        <h2 class="course-date">Start Date: {{session_date}}</h2>
+                                    {% endif %}
+                                    <div class="course-category"><b>Category</b>: {{categories}}</div>
+                                    <figure>
+                                        <span class="course-summary" id="course-time-amount"><i class="fa fa-university"><a href='{{university_link}}'>{{university_name}}</a></i></span>
+                                        {% if instructors %}
+                                            <span class="course-summary" id="course-time-amount"><i class="fa fa-user"></i>{{instructors}}</span>
+                                        {% endif %}
+                                    </figure>
+                                    <hr>
+                                    {% if 'None' not in session_weeks %}
+                                        <figure>
+                                            <span class="course-summary" id="course-length"><i class="fa fa-calendar"></i>{{session_weeks}}</span>
+                                        </figure>
+                                    {% endif %}
+                                </section><!-- /#course-header -->
+
+                                <section id="course-tabs">
+                                    <!-- Nav tabs -->
+                                    <ul class="nav nav-tabs course-detail-tabs">
+                                        <li class="active"><a href="#tab-schedule" data-toggle="tab">{{language}}</a></li>
+  	                                </ul><!-- /.course-detail-tabs -->
+
+                                    <!-- Tab panes -->
+                                    <div class="tab-content course-tab-content">
+                                        <div class="tab-pane fade in active" id="tab-schedule">
+                                            {% if 'None' not in object.short_summary %}
+                                   			    <section id="course-info">
+        	                                 	    <header><h2>Description</h2></header>
+                                    		        <p >
+                                           			    {{object.short_summary}}
+                                       			    </p>
+                            		            </section><!-- /#course-info -->
+                            		        {% endif %}
+                            		        {% if 'None' not in object.summary %}
+		                            		    <section id="course-info">
+                                        			<header><h2>About the course</h2></header>
+                                            		<p id="sourceText" class="textJustify">
+                                                  		{{object.summary | safe}}
+                                              		</p>
+                                    			</section>
+                                    		{% endif %}
+
+
+                                            <section class="course-schedule">
+                                                {% if 'None' not in object.syllabus %}
+                                                    <header><h2>Course Syllabus</h2></header>
+                                                    <article class="course-schedule-block">
+                                                    <p>
+                                                        {{object.syllabus | safe}}
+                                                    </p>
+                                                {% endif %}
+                                                {% if 'None' not in object.recommended_background %}
+                                                    <header><h2>Recommended Background</h2></header>
+                                                    <article class="course-schedule-block">
+                                                        <p>
+                                                            {{object.recommended_background | safe}}
+                                                        </p>
+                                                    </article><!-- /.course-schedule-block -->
+                                                {% endif %}
+                                            </section><!-- /#course-schedule -->
+
+                                            {% if 'None' in object.faq %}
+                                                <section id="course-faq">
+                                                    <header><h2>FAQ</h2></header>
+                                                    <p>
+                                                        {{object.faq | safe}}
+                                                    </p>
+                                                </section><!-- /#course-faq -->
+                                            {% endif %}
+                                        </div>
+                                        <div class="tab-pane fade" id="tab-video">
+                                        </div>
+                                    </div><!-- /Tab panes -->
+                                </section><!-- /#course-tabs -->
+
+                    </div><!-- /#page-main -->
+                </div><!-- /.col -->
+
+                <!--SIDEBAR Content-->
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <div id="page-sidebar" class="sidebar">
+                        <section id="course-video">
+                            <header><h2>Watch Intro Video</h2></header>
+                            <div onclick="thevid=document.getElementById('thevideo'); thevid.style.display='block'; this.style.display='none'"><img style="cursor: pointer;"
+                                src={{object.photo}} alt=""width="420" height="250"/> <img src="{{STATIC_URL}}img/play.png" style="margin-top: -300px;margin-left:-100px;"/></div>
+                            <div id="thevideo" style="display: none;"><object width="420" height="250" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+                                codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true" /><param name="allowscriptaccess"
+                                value="always" /><param name="src" value= http://www.youtube.com/v/{{object.trailer}}?version=3&amp;hl=en_US&amp;autoplay=1 /><param name="allowfullscreen"
+                                value="true" /><embed width="420" height="250" type="application/x-shockwave-flash"
+                                src=http://www.youtube.com/v/{{object.trailer}}?version=3&amp;hl=en_US&amp;autoplay=1 allowFullScreen="true" allowscriptaccess="always"
+                                allowfullscreen="true" /></object>
+                            </div>
+                        </section><!-- /#course-video -->
+                        <br><br>
+                        <section id="join-to-course" class="center">
+    	                     <a href=https://www.coursera.org/course/{{object.key}} class="btncourse" style="width: 200px;">Join Course</a>
+                        </section><!-- /#join-to-course -->
+                        <br><br>
+                    </div><!-- /#sidebar -->
+                </div><!-- /.col -->
+                <!-- end SIDEBAR Content-->
+            </div><!-- /.row -->
+        </div><!-- /.container -->
+    </div>
+<!-- end Page Content -->
+
+{% endblock content %}

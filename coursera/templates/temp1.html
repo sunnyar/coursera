@@ -1,0 +1,152 @@
+{% extends "base_temp.html" %}
+{% load endless %}
+
+{% block content %}
+
+    <!-- Breadcrumb -->
+    <div class="container">
+        <ol class="breadcrumb">
+            <li><a href="{% url 'course_list' %}">Home</a></li>
+            <li class="active"><a href="{% url 'course_list' %}">Course Catalog</a></li>
+          <!--  <li class="active">Data</li> -->
+        </ol>
+    </div>
+
+    <!-- Page Content -->
+    <div id="page-content">
+        <div class="container">
+            <div class="row">
+                <!--SIDEBAR Content-->
+                <div class="col-lg-4 col-lg-offset-1 col-md-4 col-md-offset-1 col-sm-4 col-sm-offset-1 col-xs-4">
+                <br><br>
+                    <div id="page-sidebar" class="sidebar">
+                        <aside class="newsletter">
+                            <div class="input-group">
+                           	    <form method="get" name='search_form' id="searchform">
+                                    <input type="text" name="q" class="form-control" placeholder="Search for course here">
+                                    <span class="input-group-btn1">
+                                        <button type="submit" class="btn"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </form>
+                            </div><!-- /input-group -->
+                        </aside><!-- /.news-small -->
+                        <aside id="our-professors">  <!-- Section  3 : Category  -->
+                            <div class="input-group">
+                                <form method="post" id="cats" name='course_form'>{% csrf_token %}
+                                    <input type="checkbox" name="cat" class='categories' id="allcat_checkbox_0" checked> <strong>All Categories</strong> <span>  </span><br>
+                                    {% for category in categories.values %}
+                                        <input type="checkbox" name='cat' class='categories' id="cat_checkbox_{{forloop.counter}}" value="{{category.short_name}}">
+                                        {{category.name}}<br>
+                                    {% endfor %}<br>
+
+                                    {% for language in languages %}
+                                        {% if language.0 == 'all' %}
+                                            <input type="checkbox" name='lang' class='languages' onclick='get_courses()' id="alllang_checkbox" value="{{language.0}}" checked>
+                                            <strong>{{language.1}}</strong><br>
+                                        {% else %}
+                                            <input type="checkbox" name='lang' class='languages' onclick='get_courses()' id="lang_checkbox" value="{{language.0}}">
+                                            {{language.1}}<br>
+                                        {% endif %}
+                                    {% endfor %}
+                                </form>
+                            </div>
+                        </aside><!-- /.Section  3 : Category -->
+                    </div><!-- /#sidebar -->
+                </div><!-- /.col -->
+
+                <!--MAIN Content-->
+                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                    <div id="page-main">
+                        <section id="right-sidebar">
+                            <section class="events images" id="events">
+                                <header>
+                                    <h1> Courses </h1>
+                                </header>
+                                <div class="section-content">
+                                    {% if object_list %}
+                                        {% paginate object_list.values as objects %}
+                                        {% for course in objects %}
+                                            <article class="event">
+                                                <div class="event-thumbnail">
+                                                    <figure class="event-image">
+                                                       <div class="image-wrapper"><img class='img-responsive' src={{course.photo}}></div>
+                                                    </figure>
+                                                </div>
+                                                <aside>
+                                                    <header>
+                                                        <a href="{% url 'course_detail' pk=course.id %}">{{course.title}}</a>
+                                                    </header>
+                                                    <div class="additional-info"><span class="glyphicon glyphicon-align-center">&nbsp;{{course.key}}&nbsp;</span>
+                                                        {% for lang in languages %}
+                                                            {% if course.language == lang.0 %}
+                                                                <span class="fa fa-globe">&nbsp;{{lang.1}}</span>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                    <div class="description">
+                                                        <p>{{course.short_summary}}</p>
+                                                    </div>
+                                                    <a href="{% url 'course_detail' pk=course.id %}" class="btn btn-framed btn-color-pink btn-small">View Details</a>
+                                                </aside>
+                                            </article>
+                                        {% endfor %}
+                                        {% get_pages %}
+                                        <div>
+                                            {% if pages.previous %}
+                                                <span class='btn btn-primary'>{{ pages.previous }}</span>
+                                            {% endif %}
+                                            {% if pages.next %}
+                                                <span class='btn btn-primary pull-right'>{{ pages.next }}</span>
+                                            {% endif %}
+                                        </div><br><br><br>
+                                    {% else %}
+                                        <h2>No Course available. Search Again !!</h2>
+                                    {% endif %}
+                                </div><!-- /.section-content -->
+                                <br><br>
+                            </section>
+                        </section><!-- /.events-images -->
+                    </div><!-- /#page-main -->
+                </div><!-- /.col -->
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+
+        function get_courses(){
+            document.forms["course_form"].submit();
+            $("#cats").submit(function(event){
+                $.get("/courses/");
+            });
+        };
+
+       // GET Search DATA
+        $(document).ready(function() {
+            $("#searchform").submit(function(event){
+                $.get("/courses/");
+            });
+        });
+
+
+        function checkbox_click(click_id) {
+            var all_cat_val = document.getElementById("allcat_checkbox_0").checked;
+            alert(all_cat_val);
+            var cat_val = document.getElementById("cat_checkbox_"+ click_id).checked;
+            alert(cat_val);
+            if (cat_val == true)
+            {
+                alert('in if');
+                document.getElementById("allcat_checkbox_0").checked = false;
+            }
+            else
+            {
+                alert('In else');
+                document.getElementById("cat_checkbox_"+click_id).checked = true;
+                document.getElementById("allcat_checkbox_0").checked = false;
+            }
+        }
+
+    </script>
+{% endblock content %}
